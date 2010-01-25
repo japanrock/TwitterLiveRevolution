@@ -4,8 +4,8 @@
 require 'rubygems'
 require 'oauth'
 
-CONSUMER_KEY = 'BNKnGRJvipUp4dk079AqTA'
-CONSUMER_SECRET = 'MOhm85LWqXho2seF1AyAWwfaZ7BCGYjcKcOEdeiZs'
+CONSUMER_KEY = ''
+CONSUMER_SECRET = ''
 
 consumer = OAuth::Consumer.new(
   CONSUMER_KEY,
