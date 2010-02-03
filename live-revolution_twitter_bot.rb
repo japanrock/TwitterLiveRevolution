@@ -66,7 +66,7 @@ end
 
 class PresidentBlog
   def base_url
-    "http://www.live-revolution.co.jp"
+    "http://www.president-blog.com"
   end
 
   def feed
