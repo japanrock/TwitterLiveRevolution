@@ -48,29 +48,29 @@ end
 
 class LiveRevolution
   def base_url
-    "http://www.live-revolution.co.jp"
+    "http://www.live-revolution.co.jp/"
   end
 
   def news_feed
-    Hpricot(open("#{base_url}/atom_0093news.xml"))
+    Hpricot(open("#{base_url}atom_0093news.xml"))
   end
 
   def adc_news_feed
-    Hpricot(open("#{base_url}/atom_0060adc_news.xml"))
+    Hpricot(open("#{base_url}atom_0060adc_news.xml"))
   end
   
   def adc_maintenance_news_feed
-    Hpricot(open("#{base_url}/adc_news_maintenance.xml"))
+    Hpricot(open("#{base_url}adc_news_maintenance.xml"))
   end
 end
 
 class PresidentBlog
   def base_url
-    "http://www.president-blog.com"
+    "http://www.president-blog.com/"
   end
 
   def feed
-    Hpricot(open("#{base_url}/?mode=atom"))
+    Hpricot(open("#{base_url}?mode=atom"))
   end
 end
 
