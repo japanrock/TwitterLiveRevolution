@@ -8,9 +8,9 @@ require 'hpricot'
 require 'open-uri'
 require 'yaml'
 
-class LiveRevolution
+class TwitterBase
   def initialize
-    @secret_keys = YAML.load_file("secret_keys.yml.example")
+    @secret_keys = YAML.load_file("secret_keys.yml")
   end
   
   def consumer_key
@@ -44,7 +44,9 @@ class LiveRevolution
       ACCESS_TOKEN_SECRET
     )
   end
+end
 
+class LiveRevolution
   def base_url
     "http://www.live-revolution.co.jp"
   end
@@ -56,6 +58,20 @@ class LiveRevolution
   def adc_news_feed
     Hpricot(open("#{base_url}/atom_0060adc_news.xml"))
   end
+  
+  def adc_maintenance_news_feed
+    Hpricot(open("#{base_url}/adc_news_maintenance.xml"))
+  end
 end
 
-live_revolution = LiveRevolution.new
+class PresidentBlog
+  def base_url
+    "http://www.live-revolution.co.jp"
+  end
+
+  def feed
+    Hpricot(open("#{base_url}/?mode=atom"))
+  end
+end
+
+twitter_base = TwitterBase.new
