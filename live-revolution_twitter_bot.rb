@@ -51,6 +51,17 @@ class Site
   def open_feed(feed_name)
     Hpricot(open(base_url + feed_name))
   end
+
+  def make_elems(feed)
+    if feed.class == Hpricot::Doc
+      elems = []
+      (feed/'entry').each do |elem|
+        elems << elem
+      end
+    end
+
+    elems
+  end
 end
 
 class LiveRevolution < Site
@@ -59,15 +70,15 @@ class LiveRevolution < Site
   end
 
   def news_feed
-    open_feed("atom_0093news.xml")
-  end
+    make_elems(open_feed("atom_0093news.xml"))
+ end
 
   def adc_news_feed
-    open_feed("atom_0060adc_news.xml")
+    make_elems(open_feed("atom_0060adc_news.xml"))
   end
   
   def adc_maintenance_news_feed
-    open_feed("adc_news_maintenance.xml")
+    make_elems(open_feed("adc_news_maintenance.xml"))
   end
 end
 
@@ -77,10 +88,12 @@ class PresidentBlog < Site
   end
 
   def feed
-    open_feed("?mode=atom")
+    omake_elems(pen_feed("?mode=atom"))
   end
 end
 
 twitter_base    = TwitterBase.new
 live_revolution = LiveRevolution.new
 president_blog  = PresidentBlog.new
+
+lr_news_elems = live_revolution.news_feed
