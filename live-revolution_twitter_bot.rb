@@ -46,32 +46,41 @@ class TwitterBase
   end
 end
 
-class LiveRevolution
+class Site
+  private
+  def open_feed(feed_name)
+    Hpricot(open(base_url + feed_name))
+  end
+end
+
+class LiveRevolution < Site
   def base_url
     "http://www.live-revolution.co.jp/"
   end
 
   def news_feed
-    Hpricot(open("#{base_url}atom_0093news.xml"))
+    open_feed("atom_0093news.xml")
   end
 
   def adc_news_feed
-    Hpricot(open("#{base_url}atom_0060adc_news.xml"))
+    open_feed("atom_0060adc_news.xml")
   end
   
   def adc_maintenance_news_feed
-    Hpricot(open("#{base_url}adc_news_maintenance.xml"))
+    open_feed("adc_news_maintenance.xml")
   end
 end
 
-class PresidentBlog
+class PresidentBlog < Site
   def base_url
     "http://www.president-blog.com/"
   end
 
   def feed
-    Hpricot(open("#{base_url}?mode=atom"))
+    open_feed("?mode=atom")
   end
 end
 
-twitter_base = TwitterBase.new
+twitter_base    = TwitterBase.new
+live_revolution = LiveRevolution.new
+president_blog  = PresidentBlog.new
