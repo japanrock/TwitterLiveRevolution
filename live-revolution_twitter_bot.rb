@@ -7,6 +7,7 @@ require 'json'
 require 'hpricot'
 require 'open-uri'
 require 'yaml'
+require 'parsedate'
 
 class TwitterBase
   def initialize
@@ -46,7 +47,30 @@ class TwitterBase
   end
 end
 
-class Site
+class Feed
+  attr_reader :publisheds
+  attr_reader :titles
+  attr_reader :links
+  
+  def initialize
+    @all_publisheds = []
+    @all_titles     = []
+    @all_links      = []
+    @publisheds = []
+    @titles     = []
+    @links      = []
+  end
+
+  def filter
+    return self if @all_publisheds.empty?
+
+    @all_publisheds.each do|published|
+      if Time.now < Time.local(ParseDate::parsedate(published.inner_html)[0..-3].join(',')) + interval
+        @publishes << publushed
+      end
+    end
+  end
+
   private
   def open_feed(feed_name)
     Hpricot(open(base_url + feed_name))
@@ -54,24 +78,35 @@ class Site
 
   def make_elems(feed)
     if feed.class == Hpricot::Doc
-      elems = []
-      (feed/'entry').each do |elem|
-        elems << elem
+      (feed/'published').each do |published|
+        @all_publisheds << published
       end
+
+      (feed/'title').each do |title|
+        @all_titles << title
+      end
+    
+      (feed/'link').each do |link|
+        @all_links << link
+      end   
     end
 
-    elems
+    self
+  end
+
+  def interval
+    60 * 60 * 24
   end
 end
 
-class LiveRevolution < Site
+class LiveRevolution < Feed
   def base_url
     "http://www.live-revolution.co.jp/"
   end
 
   def news_feed
     make_elems(open_feed("atom_0093news.xml"))
- end
+  end
 
   def adc_news_feed
     make_elems(open_feed("atom_0060adc_news.xml"))
@@ -82,7 +117,7 @@ class LiveRevolution < Site
   end
 end
 
-class PresidentBlog < Site
+class PresidentBlog < Feed
   def base_url
     "http://www.president-blog.com/"
   end
@@ -96,4 +131,6 @@ twitter_base    = TwitterBase.new
 live_revolution = LiveRevolution.new
 president_blog  = PresidentBlog.new
 
-lr_news_elems = live_revolution.news_feed
+lr_news_feed = live_revolution.news_feed
+lr_news_feed.filter
+
