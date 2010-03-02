@@ -65,10 +65,14 @@ class Feed
     return self if @all_publisheds.empty?
 
     @all_publisheds.each do|published|
-      if Time.now < Time.local(ParseDate::parsedate(published.inner_html)[0..-3].join(',')) + interval
-        @publishes << publushed
+      published = ParseDate::parsedate(published.inner_html)[0..-3].join(',').split(/,/)
+
+      if Time.now < Time.local(published[0].to_i, published[1].to_i, published[2].to_i, published[3].to_i, published[4].to_i, published[5].to_i) + interval
+        @publisheds << published.join(',')
       end
     end
+
+    @publisheds
   end
 
   private
@@ -123,7 +127,7 @@ class PresidentBlog < Feed
   end
 
   def feed
-    omake_elems(pen_feed("?mode=atom"))
+    make_elems(pen_feed("?mode=atom"))
   end
 end
 
@@ -133,4 +137,3 @@ president_blog  = PresidentBlog.new
 
 lr_news_feed = live_revolution.news_feed
 lr_news_feed.filter
-
