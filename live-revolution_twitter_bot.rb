@@ -8,6 +8,7 @@ require 'hpricot'
 require 'open-uri'
 require 'yaml'
 require 'parsedate'
+require "kconv"
 
 # TwitterのAPIとのやりとりを行うクラス
 class TwitterBase
@@ -73,8 +74,8 @@ class Feed
 
       if Time.now < Time.local(published[0].to_i, published[1].to_i, published[2].to_i, published[3].to_i, published[4].to_i, published[5].to_i) + gmt_mode_japan + interval
         @publisheds << published.join(',')
-        @titles << @all_titles[index]
-        @links << @all_links[index]
+        @titles << Kconv.toutf8(@all_titles[index].inner_html)
+        @links << @all_links[index].inner_html
       end
     end
   end
@@ -152,4 +153,4 @@ twitter_base    = TwitterBase.new
 live_revolution = LiveRevolution.new
 president_blog  = PresidentBlog.new
 
-live_revolution.news_feede
+live_revolution.news_feed
