@@ -97,15 +97,15 @@ class Feed
   # @all_linksにはリンクURL
   def make_elems(feed)
     if feed.class == Hpricot::Doc
-      (feed/'published').each do |published|
+      (feed/'entry'/'published').each do |published|
         @all_publisheds << published
       end
 
-      (feed/'title').each do |title|
+      (feed/'entry'/'title').each do |title|
         @all_titles << title
       end
     
-      (feed/'link').each do |link|
+      (feed/'entry'/'link').each do |link|
         @all_links << link
       end   
     end
