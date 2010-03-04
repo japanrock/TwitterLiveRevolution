@@ -34,8 +34,8 @@ class TwitterBase
 
   def consumer
     consumer = OAuth::Consumer.new(
-      CONSUMER_KEY,
-      CONSUMER_SECRET,
+      @consumer_key,
+      @consumer_secret,
       :site => 'http://twitter.com'
     )
   end
@@ -43,8 +43,17 @@ class TwitterBase
   def access_token
     access_token = OAuth::AccessToken.new(
       consumer,
-      ACCESS_TOKEN,
-      ACCESS_TOKEN_SECRET
+      @access_token,
+      @access_token_secret
+    )
+  end
+
+  def post(tweet=nil)
+    return nil unless tweet
+
+    response = access_token.post(
+      'http://twitter.com/statuses/update.json',
+      'status'=> tweet
     )
   end
 end
@@ -154,3 +163,4 @@ live_revolution = LiveRevolution.new
 president_blog  = PresidentBlog.new
 
 live_revolution.news_feed
+twitter_base.post("Test Post")
