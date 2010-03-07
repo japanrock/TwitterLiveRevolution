@@ -24,7 +24,7 @@ class TwitterBase
     @secret_keys["ConsumerSecret"]
   end
 
-  def access_token
+  def access_token_key
     @secret_keys["AccessToken"]
   end
 
@@ -33,24 +33,23 @@ class TwitterBase
   end
 
   def consumer
-    consumer = OAuth::Consumer.new(
-      @consumer_key,
-      @consumer_secret,
+    @consumer = OAuth::Consumer.new(
+      consumer_key,
+      consumer_secret,
       :site => 'http://twitter.com'
     )
   end
 
   def access_token
+    consumer
     access_token = OAuth::AccessToken.new(
-      consumer,
-      @access_token,
-      @access_token_secret
+      @consumer,
+      access_token_key,
+      access_token_secret
     )
   end
 
   def post(tweet=nil)
-    return nil unless tweet
-
     response = access_token.post(
       'http://twitter.com/statuses/update.json',
       'status'=> tweet
@@ -84,7 +83,7 @@ class Feed
       if Time.now < Time.local(published[0].to_i, published[1].to_i, published[2].to_i, published[3].to_i, published[4].to_i, published[5].to_i) + gmt_mode_japan + interval
         @publisheds << published.join(',')
         @titles << Kconv.toutf8(@all_titles[index].inner_html)
-        @links << @all_links[index].inner_html
+        @links << @all_links[index]
       end
     end
   end
@@ -115,7 +114,7 @@ class Feed
       end
     
       (feed/'entry'/'link').each do |link|
-        @all_links << link
+        @all_links << link.attributes['href']
       end   
     end
 
@@ -162,5 +161,8 @@ twitter_base    = TwitterBase.new
 live_revolution = LiveRevolution.new
 president_blog  = PresidentBlog.new
 
+# Live Revolution News Feed Post
 live_revolution.news_feed
-twitter_base.post("Test Post")
+live_revolution.titles.each_with_index do |title, index|
+ twitter_base.post(title + " - " + live_revolution.links[index])
+end
