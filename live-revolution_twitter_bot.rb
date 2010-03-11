@@ -78,14 +78,18 @@ class Feed
     return self if @all_publisheds.empty?
 
     @all_publisheds.each_with_index do|published, index|
-      published = ParseDate::parsedate(published.inner_html)[0..-3].join(',').split(/,/)
+      published = ParseDate::parsedate(published)[0..-3].join(',').split(/,/)
 
       if Time.now < Time.local(published[0].to_i, published[1].to_i, published[2].to_i, published[3].to_i, published[4].to_i, published[5].to_i) + gmt_mode_japan + interval
         @publisheds << published.join(',')
-        @titles << Kconv.toutf8(@all_titles[index].inner_html)
+        @titles << Kconv.toutf8(@all_titles[index])
         @links << @all_links[index]
       end
     end
+  end
+
+  def header
+    ''
   end
 
   private
@@ -95,30 +99,12 @@ class Feed
   end
 
   # フィードをHpricotのオブジェクトにします。
-  def open_feed(feed_name)
+  def open_feed(feed_name = '')
     Hpricot(open(base_url + feed_name))
   end
 
-  # Hpricotのオブジェクトから各インスタンス変数に配列としてセットします。
-  # @all_publishdesには時間
-  # @all_titlesにはタイトル
-  # @all_linksにはリンクURL
   def make_elems(feed)
-    if feed.class == Hpricot::Doc
-      (feed/'entry'/'published').each do |published|
-        @all_publisheds << published
-      end
-
-      (feed/'entry'/'title').each do |title|
-        @all_titles << title
-      end
-    
-      (feed/'entry'/'link').each do |link|
-        @all_links << link.attributes['href']
-      end   
-    end
-
-    self
+   self
   end
 
   # 実行からどのくらい前までのフィードを取得するか
@@ -144,6 +130,28 @@ class LiveRevolution < Feed
   def adc_maintenance_news_feed
     make_elems(open_feed("adc_news_maintenance.xml"))
   end
+
+  # Hpricotのオブジェクトから各インスタンス変数に配列としてセットします。
+  # @all_publishdesには時間
+  # @all_titlesにはタイトル
+  # @all_linksにはリンクURL
+  def make_elems(feed)
+    if feed.class == Hpricot::Doc
+      (feed/'entry'/'published').each do |published|
+        @all_publisheds << published.inner_html
+      end
+
+      (feed/'entry'/'title').each do |title|
+        @all_titles << title.inner_html
+      end
+    
+      (feed/'entry'/'link').each do |link|
+        @all_links << link.attributes['href']
+      end   
+    end
+
+    self
+  end
 end
 
 # プレジデントブログのフィードを扱うクラス
@@ -164,17 +172,55 @@ class PresidentVision < Feed
   end
 
   def feed
-    make_elems(open_feed)
+    make_elems(open_feed).filter
+  end
+
+  # Hpricotのオブジェクトから各インスタンス変数に配列としてセットします。
+  # @all_publishdesには時間
+  # @all_titlesにはタイトル
+  # @all_linksにはリンクURL
+  def make_elems(feed)
+    if feed.class == Hpricot::Doc
+      (feed/'channel'/'item'/'pubdate').each do |pubdate|
+        @all_publisheds << pubdate.inner_html
+      end
+
+      (feed/'channel'/'item'/'title').each do |title|
+        @all_titles << title.inner_html
+      end
+    
+      (feed/'channel'/'item'/'guid').each do |link|
+        @all_links << link.inner_html
+      end   
+    end
+
+    self
+  end
+
+  def header
+    '[pv]'
+  end
+
+  private
+  def gmt_mode_japan
+    0 
   end
 end
 
 
-twitter_base    = TwitterBase.new
-live_revolution = LiveRevolution.new
-president_blog  = PresidentBlog.new
+twitter_base     = TwitterBase.new
+live_revolution  = LiveRevolution.new
+president_blog   = PresidentBlog.new
+president_vision = PresidentVision.new
 
 # Live Revolution News Feed Post
 live_revolution.news_feed
 live_revolution.titles.each_with_index do |title, index|
  twitter_base.post(title + " - " + live_revolution.links[index])
+end
+
+# President Vision Feed Post
+president_vision.feed
+president_vision.titles.each_with_index do |title, index|
+  twitter_base.post(president_vision.header + title + " - " + president_vision.links[index])
 end
