@@ -153,9 +153,21 @@ class PresidentBlog < Feed
   end
 
   def feed
-    make_elems(pen_feed("?mode=atom"))
+    make_elems(open_feed("?mode=atom"))
   end
 end
+
+# プレジデントビジョンのフィードを扱うクラス
+class PresidentVision < Feed
+  def base_url
+    "http://feeds.feedburner.com/president-vision/BJYz"
+  end
+
+  def feed
+    make_elems(open_feed)
+  end
+end
+
 
 twitter_base    = TwitterBase.new
 live_revolution = LiveRevolution.new
