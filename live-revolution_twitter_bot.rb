@@ -161,7 +161,43 @@ class PresidentBlog < Feed
   end
 
   def feed
-    make_elems(open_feed("?mode=atom"))
+    make_elems(open_feed("?mode=atom")).filter
+  end
+
+  # Hpricotのオブジェクトから各インスタンス変数に配列としてセットします。
+  # @all_publishdesには時間
+  # @all_titlesにはタイトル
+  # @all_linksにはリンクURL
+  def make_elems(feed)
+    if feed.class == Hpricot::Doc
+      (feed/'modified').each do |modified|
+        @all_publisheds << modified.inner_html
+      end
+
+      (feed/'title').each do |title|
+        @all_titles << title.inner_html
+      end
+    
+      (feed/'link').each do |link|
+        @all_links << link.attributes['href']
+      end   
+    end
+
+    # headがentryと並列にいるのでheadを削除
+    @all_publisheds.delete_at(0)
+    @all_titles.delete_at(0)
+    @all_links.delete_at(0)
+
+    self
+  end
+
+  def header
+    '[pb]'
+  end
+
+  private
+  def gmt_mode_japan
+    0 
   end
 end
 
@@ -223,4 +259,10 @@ end
 president_vision.feed
 president_vision.titles.each_with_index do |title, index|
   twitter_base.post(president_vision.header + title + " - " + president_vision.links[index])
+end
+
+# President Blog Feed Post
+president_blog.feed
+president_blog.titles.each_with_index do |title, index|
+  twitter_base.post(president_blog.header + title + " - " + president_blog.links[index])
 end
