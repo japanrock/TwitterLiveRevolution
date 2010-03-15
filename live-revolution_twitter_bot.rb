@@ -10,10 +10,20 @@ require 'yaml'
 require 'parsedate'
 require "kconv"
 
+# config.ymlについて
+#   config.ymlには sercret_keys.yml への絶対パスを１行で書いてください。
+#
+# live-revolution_twitter.rbの使い方について
+#   config.ymlをセットして実行します。
+#     Usage:
+#       ruby live-revolution_twitter.rb /path/to/config.yml
+
 # TwitterのAPIとのやりとりを行うクラス
 class TwitterBase
   def initialize
-    @secret_keys = YAML.load_file("secret_keys.yml")
+    # gets.chompはconfig.ymlに書かれたsercret_keys.ymlを取得します。
+    # config.yml内のsercret_keys.ymlをloadします。
+    @secret_keys = YAML.load_file(gets.chomp)
   end
   
   def consumer_key
@@ -112,7 +122,7 @@ class Feed
 
   # 実行からどのくらい前までのフィードを取得するか
   def interval
-    60 * 60 * 24 * 14
+    60 * 60 * 24
   end
 end
 
