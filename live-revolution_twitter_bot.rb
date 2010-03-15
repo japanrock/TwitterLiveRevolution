@@ -67,9 +67,11 @@ class Feed
     @all_publisheds = []
     @all_titles     = []
     @all_links      = []
+    @all_descriptions = []
     @publisheds = []
     @titles     = []
     @links      = []
+    @descriptions = []
   end
 
   # フィード全体から「実行時間からintervalの間のフィード」を抽出します。
@@ -84,6 +86,7 @@ class Feed
         @publisheds << published.join(',')
         @titles << Kconv.toutf8(@all_titles[index])
         @links << @all_links[index]
+        @descriptions << @all_descriptions[index]
       end
     end
   end
@@ -109,7 +112,7 @@ class Feed
 
   # 実行からどのくらい前までのフィードを取得するか
   def interval
-    60 * 60 * 24
+    60 * 60 * 24 * 14
   end
 end
 
@@ -170,8 +173,8 @@ class PresidentBlog < Feed
   # @all_linksにはリンクURL
   def make_elems(feed)
     if feed.class == Hpricot::Doc
-      (feed/'modified').each do |modified|
-        @all_publisheds << modified.inner_html
+      (feed/'issued').each do |issued|
+        @all_publisheds << issued.inner_html
       end
 
       (feed/'title').each do |title|
@@ -184,7 +187,6 @@ class PresidentBlog < Feed
     end
 
     # headがentryと並列にいるのでheadを削除
-    @all_publisheds.delete_at(0)
     @all_titles.delete_at(0)
     @all_links.delete_at(0)
 
@@ -203,6 +205,8 @@ end
 
 # プレジデントビジョンのフィードを扱うクラス
 class PresidentVision < Feed
+  attr_reader :descriptions
+
   def base_url
     "http://feeds.feedburner.com/president-vision/BJYz"
   end
@@ -228,6 +232,10 @@ class PresidentVision < Feed
       (feed/'channel'/'item'/'guid').each do |link|
         @all_links << link.inner_html
       end   
+
+      (feed/'channel'/'item'/'description').each do |description|
+        @all_descriptions << description.inner_html
+      end
     end
 
     self
@@ -252,13 +260,13 @@ president_vision = PresidentVision.new
 # Live Revolution News Feed Post
 live_revolution.news_feed
 live_revolution.titles.each_with_index do |title, index|
- twitter_base.post(title + " - " + live_revolution.links[index])
+  twitter_base.post(title + " - " + live_revolution.links[index])
 end
 
 # President Vision Feed Post
 president_vision.feed
 president_vision.titles.each_with_index do |title, index|
-  twitter_base.post(president_vision.header + title + " - " + president_vision.links[index])
+  twitter_base.post(president_vision.header + president_vision.descriptions[index] + " - " + president_vision.links[index])
 end
 
 # President Blog Feed Post
