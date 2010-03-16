@@ -141,7 +141,7 @@ class LiveRevolution < Feed
   end
   
   def adc_maintenance_news_feed
-    make_elems(open_feed("adc_news_maintenance.xml"))
+    make_elems(open_feed("adc_news_maintenance.xml")).filter
   end
 
   # Hpricotのオブジェクトから各インスタンス変数に配列としてセットします。
@@ -263,6 +263,13 @@ end
 
 
 twitter_base     = TwitterBase.new
+
+# Live Revolution ADC++ Maintenance News Feed Post
+live_revolution  = LiveRevolution.new
+live_revolution.adc_maintenance_news_feed
+live_revolution.titles.each_with_index do |title, index|
+  twitter_base.post(title + " - " + live_revolution.links[index])
+end
 
 # Live Revolution ADC++ News Feed Post
 live_revolution  = LiveRevolution.new
