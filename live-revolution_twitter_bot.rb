@@ -122,7 +122,7 @@ class Feed
 
   # 実行からどのくらい前までのフィードを取得するか
   def interval
-    60 * 60 * 24
+    60 * 60 * 24 * 60
   end
 end
 
@@ -137,7 +137,7 @@ class LiveRevolution < Feed
   end
 
   def adc_news_feed
-    make_elems(open_feed("atom_0060adc_news.xml"))
+    make_elems(open_feed("atom_0060adc_news.xml")).filter
   end
   
   def adc_maintenance_news_feed
@@ -263,23 +263,30 @@ end
 
 
 twitter_base     = TwitterBase.new
+
+# Live Revolution ADC++ News Feed Post
 live_revolution  = LiveRevolution.new
-president_blog   = PresidentBlog.new
-president_vision = PresidentVision.new
+live_revolution.adc_news_feed
+live_revolution.titles.each_with_index do |title, index|
+  twitter_base.post(title + " - " + live_revolution.links[index])
+end
 
 # Live Revolution News Feed Post
+live_revolution  = LiveRevolution.new
 live_revolution.news_feed
 live_revolution.titles.each_with_index do |title, index|
   twitter_base.post(title + " - " + live_revolution.links[index])
 end
 
 # President Vision Feed Post
+president_vision = PresidentVision.new
 president_vision.feed
 president_vision.titles.each_with_index do |title, index|
   twitter_base.post(president_vision.header + president_vision.descriptions[index] + " - " + president_vision.links[index])
 end
 
 # President Blog Feed Post
+president_blog   = PresidentBlog.new
 president_blog.feed
 president_blog.titles.each_with_index do |title, index|
   twitter_base.post(president_blog.header + title + " - " + president_blog.links[index])
