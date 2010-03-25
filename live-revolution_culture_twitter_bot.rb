@@ -106,5 +106,4 @@ head     = live_revolution_culture.head
 url      = live_revolution_culture.selected_culture["url"]
 contents = live_revolution_culture.selected_culture["contents"]
 
-#twitter_base.post(head + contents + " - " + url)
-puts head + contents + " - " + url
+twitter_base.post(head + contents + " - " + url)
