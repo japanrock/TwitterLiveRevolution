@@ -73,13 +73,19 @@ end
 
 class LiveRevolutionCulture
   attr_reader :selected_culture
+  attr_reader :select
 
   def initialize
     @culture = YAML.load_file('culture.yml')
   end
 
+  # ここはあとでリファクタリング・・・微妙なので・・・
   def head
-    "[culture]"
+    if @select < 47
+      "[culture]"
+    else
+      "[lrheart]"
+    end
   end
 
   def random_select
@@ -88,11 +94,11 @@ class LiveRevolutionCulture
 
   # ポストする範囲を指定する
   def select
-    rand(46)
+    @select = rand(106)
   end
 end
 
-twitter_base     = TwitterBase.new
+# twitter_base     = TwitterBase.new
 
 live_revolution_culture  = LiveRevolutionCulture.new
 content  = live_revolution_culture.random_select
@@ -100,4 +106,5 @@ head     = live_revolution_culture.head
 url      = live_revolution_culture.selected_culture["url"]
 contents = live_revolution_culture.selected_culture["contents"]
 
-twitter_base.post(head + contents + " - " + url)
+#twitter_base.post(head + contents + " - " + url)
+puts head + contents + " - " + url
