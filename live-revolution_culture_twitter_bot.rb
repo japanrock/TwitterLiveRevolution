@@ -98,7 +98,7 @@ class LiveRevolutionCulture
   end
 end
 
-# twitter_base     = TwitterBase.new
+twitter_base     = TwitterBase.new
 
 live_revolution_culture  = LiveRevolutionCulture.new
 content  = live_revolution_culture.random_select
