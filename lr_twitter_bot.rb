@@ -10,20 +10,17 @@ require 'yaml'
 require 'parsedate'
 require "kconv"
 
-# config.ymlについて
-#   config.ymlには sercret_keys.yml への絶対パスを１行で書いてください。
-#
-# live-revolution_twitter.rbの使い方について
-#   config.ymlをセットして実行します。
-#     Usage:
-#       ruby live-revolution_twitter.rb /path/to/config.yml
+### TODO:
+### ・TwitterBaseクラスを外に出す
+
+# Usage:
+# ruby lr_twitter.rb /path/to/sercret_keys.yml
 
 # TwitterのAPIとのやりとりを行うクラス
 class TwitterBase
   def initialize
-    # gets.chompはconfig.ymlに書かれたsercret_keys.ymlを取得します。
     # config.yml内のsercret_keys.ymlをloadします。
-    @secret_keys = YAML.load_file(gets.chomp)
+    @secret_keys = YAML.load_file(ARGV[0] || 'sercret_keys.yml')
   end
   
   def consumer_key
