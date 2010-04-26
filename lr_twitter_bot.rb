@@ -11,15 +11,15 @@ require 'parsedate'
 require "kconv"
 
 ### TODO:
-### ¡¦TwitterBase¥¯¥é¥¹¤ò³°¤Ë½Ğ¤¹
+### ãƒ»TwitterBaseã‚¯ãƒ©ã‚¹ã‚’å¤–ã«å‡ºã™
 
 # Usage:
 # ruby lr_twitter.rb /path/to/sercret_keys.yml
 
-# Twitter¤ÎAPI¤È¤Î¤ä¤ê¤È¤ê¤ò¹Ô¤¦¥¯¥é¥¹
+# Twitterã®APIã¨ã®ã‚„ã‚Šã¨ã‚Šã‚’è¡Œã†ã‚¯ãƒ©ã‚¹
 class TwitterBase
   def initialize
-    # config.ymlÆâ¤Îsercret_keys.yml¤òload¤·¤Ş¤¹¡£
+    # config.ymlå†…ã®sercret_keys.ymlã‚’loadã—ã¾ã™ã€‚
     @secret_keys = YAML.load_file(ARGV[0] || 'sercret_keys.yml')
   end
   
@@ -64,7 +64,7 @@ class TwitterBase
   end
 end
 
-# ¥Õ¥£¡¼¥É¤ò°·¤¦´ğËÜ¥¯¥é¥¹
+# ãƒ•ã‚£ãƒ¼ãƒ‰ã‚’æ‰±ã†åŸºæœ¬ã‚¯ãƒ©ã‚¹
 class Feed
   attr_reader :publisheds
   attr_reader :titles
@@ -81,8 +81,8 @@ class Feed
     @descriptions = []
   end
 
-  # ¥Õ¥£¡¼¥ÉÁ´ÂÎ¤«¤é¡Ö¼Â¹Ô»ş´Ö¤«¤éinterval¤Î´Ö¤Î¥Õ¥£¡¼¥É¡×¤òÃê½Ğ¤·¤Ş¤¹¡£
-  # @titles, @links, @publisheds ¤Ë¥Õ¥£¥ë¥¿¡¼¤«¤éÃê½Ğ¤µ¤ì¤¿¥Ç¡¼¥¿¤ò¥»¥Ã¥È¤·¤Ş¤¹¡£
+  # ãƒ•ã‚£ãƒ¼ãƒ‰å…¨ä½“ã‹ã‚‰ã€Œå®Ÿè¡Œæ™‚é–“ã‹ã‚‰intervalã®é–“ã®ãƒ•ã‚£ãƒ¼ãƒ‰ã€ã‚’æŠ½å‡ºã—ã¾ã™ã€‚
+  # @titles, @links, @publisheds ã«ãƒ•ã‚£ãƒ«ã‚¿ãƒ¼ã‹ã‚‰æŠ½å‡ºã•ã‚ŒãŸãƒ‡ãƒ¼ã‚¿ã‚’ã‚»ãƒƒãƒˆã—ã¾ã™ã€‚
   def filter
     return self if @all_publisheds.empty?
 
@@ -103,12 +103,12 @@ class Feed
   end
 
   private
-  # GMT¤Î¤Î¥Õ¥£¡¼¥É»ş´Ö¤òÆüËÜ¤È¹ç¤ï¤»¤ë¤¿¤á¤ËÍøÍÑ¤·¤Ş¤¹
+  # GMTã®ã®ãƒ•ã‚£ãƒ¼ãƒ‰æ™‚é–“ã‚’æ—¥æœ¬ã¨åˆã‚ã›ã‚‹ãŸã‚ã«åˆ©ç”¨ã—ã¾ã™
   def gmt_mode_japan
     60 * 60 * 9
   end
 
-  # ¥Õ¥£¡¼¥É¤òHpricot¤Î¥ª¥Ö¥¸¥§¥¯¥È¤Ë¤·¤Ş¤¹¡£
+  # ãƒ•ã‚£ãƒ¼ãƒ‰ã‚’Hpricotã®ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆã«ã—ã¾ã™ã€‚
   def open_feed(feed_name = '')
     Hpricot(open(base_url + feed_name))
   end
@@ -117,13 +117,13 @@ class Feed
    self
   end
 
-  # ¼Â¹Ô¤«¤é¤É¤Î¤¯¤é¤¤Á°¤Ş¤Ç¤Î¥Õ¥£¡¼¥É¤ò¼èÆÀ¤¹¤ë¤«
+  # å®Ÿè¡Œã‹ã‚‰ã©ã®ãã‚‰ã„å‰ã¾ã§ã®ãƒ•ã‚£ãƒ¼ãƒ‰ã‚’å–å¾—ã™ã‚‹ã‹
   def interval
     60 * 60 * 24
   end
 end
 
-# ¥³¡¼¥İ¥ì¡¼¥È¥µ¥¤¥È¤Î¥Õ¥£¡¼¥É¤ò°·¤¦¥¯¥é¥¹
+# ã‚³ãƒ¼ãƒãƒ¬ãƒ¼ãƒˆã‚µã‚¤ãƒˆã®ãƒ•ã‚£ãƒ¼ãƒ‰ã‚’æ‰±ã†ã‚¯ãƒ©ã‚¹
 class LiveRevolution < Feed
   def base_url
     "http://www.live-revolution.co.jp/"
@@ -141,10 +141,10 @@ class LiveRevolution < Feed
     make_elems(open_feed("adc_news_maintenance.xml")).filter
   end
 
-  # Hpricot¤Î¥ª¥Ö¥¸¥§¥¯¥È¤«¤é³Æ¥¤¥ó¥¹¥¿¥ó¥¹ÊÑ¿ô¤ËÇÛÎó¤È¤·¤Æ¥»¥Ã¥È¤·¤Ş¤¹¡£
-  # @all_publishdes¤Ë¤Ï»ş´Ö
-  # @all_titles¤Ë¤Ï¥¿¥¤¥È¥ë
-  # @all_links¤Ë¤Ï¥ê¥ó¥¯URL
+  # Hpricotã®ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆã‹ã‚‰å„ã‚¤ãƒ³ã‚¹ã‚¿ãƒ³ã‚¹å¤‰æ•°ã«é…åˆ—ã¨ã—ã¦ã‚»ãƒƒãƒˆã—ã¾ã™ã€‚
+  # @all_publishdesã«ã¯æ™‚é–“
+  # @all_titlesã«ã¯ã‚¿ã‚¤ãƒˆãƒ«
+  # @all_linksã«ã¯ãƒªãƒ³ã‚¯URL
   def make_elems(feed)
     if feed.class == Hpricot::Doc
       (feed/'entry'/'published').each do |published|
@@ -164,7 +164,7 @@ class LiveRevolution < Feed
   end
 end
 
-# ¥×¥ì¥¸¥Ç¥ó¥È¥Ö¥í¥°¤Î¥Õ¥£¡¼¥É¤ò°·¤¦¥¯¥é¥¹
+# ãƒ—ãƒ¬ã‚¸ãƒ‡ãƒ³ãƒˆãƒ–ãƒ­ã‚°ã®ãƒ•ã‚£ãƒ¼ãƒ‰ã‚’æ‰±ã†ã‚¯ãƒ©ã‚¹
 class PresidentBlog < Feed
   def base_url
     "http://www.president-blog.com/"
@@ -174,10 +174,10 @@ class PresidentBlog < Feed
     make_elems(open_feed("?mode=atom")).filter
   end
 
-  # Hpricot¤Î¥ª¥Ö¥¸¥§¥¯¥È¤«¤é³Æ¥¤¥ó¥¹¥¿¥ó¥¹ÊÑ¿ô¤ËÇÛÎó¤È¤·¤Æ¥»¥Ã¥È¤·¤Ş¤¹¡£
-  # @all_publishdes¤Ë¤Ï»ş´Ö
-  # @all_titles¤Ë¤Ï¥¿¥¤¥È¥ë
-  # @all_links¤Ë¤Ï¥ê¥ó¥¯URL
+  # Hpricotã®ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆã‹ã‚‰å„ã‚¤ãƒ³ã‚¹ã‚¿ãƒ³ã‚¹å¤‰æ•°ã«é…åˆ—ã¨ã—ã¦ã‚»ãƒƒãƒˆã—ã¾ã™ã€‚
+  # @all_publishdesã«ã¯æ™‚é–“
+  # @all_titlesã«ã¯ã‚¿ã‚¤ãƒˆãƒ«
+  # @all_linksã«ã¯ãƒªãƒ³ã‚¯URL
   def make_elems(feed)
     if feed.class == Hpricot::Doc
       (feed/'issued').each do |issued|
@@ -193,7 +193,7 @@ class PresidentBlog < Feed
       end   
     end
 
-    # head¤¬entry¤ÈÊÂÎó¤Ë¤¤¤ë¤Î¤Çhead¤òºï½ü
+    # headãŒentryã¨ä¸¦åˆ—ã«ã„ã‚‹ã®ã§headã‚’å‰Šé™¤
     @all_titles.delete_at(0)
     @all_links.delete_at(0)
 
@@ -210,7 +210,7 @@ class PresidentBlog < Feed
   end
 end
 
-# ¥×¥ì¥¸¥Ç¥ó¥È¥Ó¥¸¥ç¥ó¤Î¥Õ¥£¡¼¥É¤ò°·¤¦¥¯¥é¥¹
+# ãƒ—ãƒ¬ã‚¸ãƒ‡ãƒ³ãƒˆãƒ“ã‚¸ãƒ§ãƒ³ã®ãƒ•ã‚£ãƒ¼ãƒ‰ã‚’æ‰±ã†ã‚¯ãƒ©ã‚¹
 class PresidentVision < Feed
   attr_reader :descriptions
 
@@ -222,10 +222,10 @@ class PresidentVision < Feed
     make_elems(open_feed).filter
   end
 
-  # Hpricot¤Î¥ª¥Ö¥¸¥§¥¯¥È¤«¤é³Æ¥¤¥ó¥¹¥¿¥ó¥¹ÊÑ¿ô¤ËÇÛÎó¤È¤·¤Æ¥»¥Ã¥È¤·¤Ş¤¹¡£
-  # @all_publishdes¤Ë¤Ï»ş´Ö
-  # @all_titles¤Ë¤Ï¥¿¥¤¥È¥ë
-  # @all_links¤Ë¤Ï¥ê¥ó¥¯URL
+  # Hpricotã®ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆã‹ã‚‰å„ã‚¤ãƒ³ã‚¹ã‚¿ãƒ³ã‚¹å¤‰æ•°ã«é…åˆ—ã¨ã—ã¦ã‚»ãƒƒãƒˆã—ã¾ã™ã€‚
+  # @all_publishdesã«ã¯æ™‚é–“
+  # @all_titlesã«ã¯ã‚¿ã‚¤ãƒˆãƒ«
+  # @all_linksã«ã¯ãƒªãƒ³ã‚¯URL
   def make_elems(feed)
     if feed.class == Hpricot::Doc
       (feed/'channel'/'item'/'pubdate').each do |pubdate|
